@@ -19,12 +19,15 @@ package org.apache.nifi.processors.tika;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+
+import static org.junit.Assert.assertTrue;
 
 
 public class TestConvertDocumentToText {
@@ -139,17 +142,18 @@ public class TestConvertDocumentToText {
     // resulting output CONTAINS the expected text.  But, we can't use getData() because that's private
     // to the MockFlowFile interface.  However, again, We can use IntelliJ's debugger and expression parser
     // to check it though.
-//    @Test
-//    public void testFodtExtraction() throws FileNotFoundException {
-//        String expected = "This is test text.";
-//        InputStream is = getFileStream("test-flat-xml-odf.fodt");
-//        runner.enqueue(is);
-//        runner.run();
-//        runner.assertTransferCount("success", 1);
-//        runner.getFlowFilesForRelationship(ConvertDocumentToText.REL_SUCCESS).get(0).assertContentEquals(expected, "UTF-8");
+    @Ignore
+    @Test
+    public void testFodtExtraction() throws FileNotFoundException {
+        String expected = "This is test text.";
+        InputStream is = getFileStream("test-flat-xml-odf.fodt");
+        runner.enqueue(is);
+        runner.run();
+        runner.assertTransferCount("success", 1);
+        runner.getFlowFilesForRelationship(ConvertDocumentToText.REL_SUCCESS).get(0).assertContentEquals(expected, "UTF-8");
 //        String result = new String(runner.getFlowFilesForRelationship(ConvertDocumentToText.REL_SUCCESS).get(0).getData());
 //        assertTrue(result.contains("This is test text."));
-//    }
+    }
 
     @Test
     public void testOdfExtraction() throws FileNotFoundException {
@@ -178,17 +182,18 @@ public class TestConvertDocumentToText {
     // resulting output CONTAINS the expected text.  But, we can't use getData() because that's private
     // to the MockFlowFile interface.  However, again, We can use IntelliJ's debugger and expression parser
     // to check it though.
-//    @Test
-//    public void testWord2003Extraction() throws FileNotFoundException {
-//        String expected = "test\n";
-//        InputStream is = getFileStream("test-word-2003.xml");
-//        runner.enqueue(is);
-//        runner.run();
-//        runner.assertTransferCount("success", 1);
-//        runner.getFlowFilesForRelationship(ConvertDocumentToText.REL_SUCCESS).get(0).assertContentEquals(expected, "UTF-8");
+    @Ignore
+    @Test
+    public void testWord2003Extraction() throws FileNotFoundException {
+        String expected = "test\n";
+        InputStream is = getFileStream("test-word-2003.xml");
+        runner.enqueue(is);
+        runner.run();
+        runner.assertTransferCount("success", 1);
+        runner.getFlowFilesForRelationship(ConvertDocumentToText.REL_SUCCESS).get(0).assertContentEquals(expected, "UTF-8");
 //        String result = new String(runner.getFlowFilesForRelationship(ConvertDocumentToText.REL_SUCCESS).get(0).getData());
 //        assertTrue(result.contains("This is test text."));
-//    }
+    }
 
     private InputStream getFileStream(String relFilePath) throws FileNotFoundException
     {
