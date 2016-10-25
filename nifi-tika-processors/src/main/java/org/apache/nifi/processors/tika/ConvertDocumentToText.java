@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.tika.parser.PasswordProvider;
 import org.xml.sax.SAXException;
 
 import org.apache.nifi.components.PropertyDescriptor;
@@ -74,6 +75,15 @@ public class ConvertDocumentToText extends AbstractProcessor {
             .addValidator(StandardValidators.DATA_SIZE_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor PDF_PASSWORD = new PropertyDescriptor.Builder()
+            .name("PDF Password")
+            .displayName("PDF Password")
+            .description("The password for the PDF, if needed")
+            .required(false)
+            .sensitive(true)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
     public static final Relationship REL_SUCCESS = new Relationship.Builder()
             .name("success")
             .description(
@@ -108,6 +118,7 @@ public class ConvertDocumentToText extends AbstractProcessor {
 
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
         descriptors.add(MAX_FILE_SIZE);
+        descriptors.add(PDF_PASSWORD);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<Relationship>();
@@ -150,6 +161,16 @@ public class ConvertDocumentToText extends AbstractProcessor {
 
         final BodyContentHandler parserHandler = new BodyContentHandler(maxFileSize > 0 ? maxFileSize : -1);
         final ParseContext parserContext = new ParseContext();
+
+        if (context.getProperty(PDF_PASSWORD).getValue() != null && !"".equals(context.getProperty(PDF_PASSWORD).getValue())) {
+            parserContext.set(PasswordProvider.class, new PasswordProvider() {
+                @Override
+                public String getPassword(Metadata metadata) {
+                    return context.getProperty(PDF_PASSWORD).getValue();
+                }
+            });
+        }
+
         final AutoDetectParser parser = new AutoDetectParser();
 
         final String filename = flowFile.getAttribute(CoreAttributes.FILENAME.key());
